@@ -26,4 +26,4 @@ RUN sed -i "s#deb http://deb.debian.org/debian buster main#deb http://deb.debian
     # Fix webdriverdownloader not handling asc files
     && sed -i "320s#bitness in name]#bitness in name and name[-3:] != 'asc' ]#g" /usr/local/lib/python3.7/site-packages/webdriverdownloader/webdriverdownloader.py
 ADD xpath_compile.py /usr/local/lib/python3.7/site-packages/instapy/xpath_compile.py
-
+CMD ["python", "docker_quickstart.py"]
