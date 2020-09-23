@@ -4,8 +4,6 @@ services:
     image: instapy/instapy:latest
     container_name: "${COMPOSE_PROJECT_NAME}_web"
     env_file: .env
-    stdin_open: true # docker run -i
-    tty: true        # docker run -t
     environment:
       - PYTHONUNBUFFERED=0
       - INSTAPY_WORKSPACE=/code/InstaPy
