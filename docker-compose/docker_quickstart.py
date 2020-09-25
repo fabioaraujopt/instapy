@@ -1,38 +1,48 @@
-"""
-This template is written by @cormo1990
+"""This script is automatically executed every 6h on my server via cron"""
 
-What does this quickstart script aim to do?
-- Basic follow/unfollow activity.
+# additional imports random amount of likes and unfollows
+import random
 
-NOTES:
-- I don't want to automate comment and too much likes because I want to do
-this only for post that I really like the content so at the moment I only
-use the function follow/unfollow.
-- I use two files "quickstart", one for follow and one for unfollow.
-- I noticed that the most important thing is that the account from where I
-get followers has similar contents to mine in order to be sure that my
-content could be appreciated. After the following step, I start unfollowing
-the user that don't followed me back.
-- At the end I clean my account unfollowing all the users followed with
-InstaPy.
-"""
-
-# imports
 from instapy import InstaPy
-from instapy import smart_run
-import time
+from instapy.util import smart_run
+
+
+
 # login credentials
 insta_username = 'passaro.manidestro'
 insta_password = 'coelho123'
 
-# get an InstaPy session!
-# set headless_browser=True to run InstaPy in the background
+dont_likes = ['sex','nude','naked','beef','pork','seafood',
+            'egg','chicken','cheese','sausage','lobster',
+            'fisch','schwein','lamm','rind','kuh','meeresfrüchte',
+            'schaf','ziege','hummer','yoghurt','joghurt','dairy',
+            'meal','food','eat','pancake','cake','dessert',
+            'protein','essen','mahl','breakfast','lunch',
+            'dinner','turkey','truthahn','plate','bacon',
+            'sushi','burger','salmon','shrimp','steak',
+            'schnitzel','goat','oxtail','mayo','fur','leather',
+            'cream','hunt','gun','shoot','slaughter','pussy',
+            'breakfast','dinner','lunch']
+
+friends = ['']
+
+like_tag_list = ['30anos','29anos', '28anos', '31anos', '27anos', '26anos', 'casa', 'work', 'trabalho', 'workhard', 'home', 'investimento', 'capitalismo', 'casa', 'imobiliario','moradia','porche','comprarcasa','futebol']
+
+
+# prevent posts that contain some plantbased meat from being skipped
+ignore_list = ['girl']
+
+accounts = ['accounts with similar content']
+
 session = InstaPy(username=insta_username,
                   password=insta_password,
                   headless_browser=True,
-                  bypass_security_challenge_using='sms')
+                  bypass_security_challenge_using='sms',
+                  disable_image_load=True)
 
 with smart_run(session):
+    session.login()
+
     session.set_quota_supervisor(enabled=True, sleep_after=["likes", "comments_d", "follows", "unfollows", "server_calls_h"], sleepyhead=True, stochastic_flow=True, notify_me=True,
                               peak_likes_hourly=57,
                               peak_likes_daily=585,
@@ -45,10 +55,25 @@ with smart_run(session):
                                   peak_server_calls_hourly=None,
                                   peak_server_calls_daily=4700)
 
-    
-    while(True): # or xrange if you are on 2.X
-        time.sleep(200)
-        session.follow_user_following(['tvioficial'], amount=10, randomize=False, sleep_delay=600)
-    
+    # settings
+    session.set_relationship_bounds(enabled=True,
+				   max_followers=15000)
 
 
+
+    session.set_dont_include(friends)
+    session.set_dont_like(dont_likes)
+    session.set_ignore_if_contains(ignore_list)
+
+    session.set_user_interact(amount=2, randomize=True, percentage=60)
+    session.set_do_follow(enabled=True, percentage=40)
+    session.set_do_like(enabled=True, percentage=80)
+
+    session.follow_by_locations(['c1900940/setubal-portugal/'], amount=100)
+
+    session.follow_by_locations(['c1895008/lisbon-portugal/'], amount=100)
+
+    # actions
+    session.like_by_tags(random.sample(like_tag_list, 3), amount=random.randint(50, 100), interact=True)
+    
+    session.unfollow_users(amount=random.randint(50,150), InstapyFollowed=(True, "all"), style="FIFO", unfollow_after=48*60*60, sleep_delay=501)
