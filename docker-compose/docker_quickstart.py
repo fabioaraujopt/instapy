@@ -29,7 +29,8 @@ insta_password = 'coelho123'
 # set headless_browser=True to run InstaPy in the background
 session = InstaPy(username=insta_username,
                   password=insta_password,
-                  headless_browser=True)
+                  headless_browser=True,
+                  bypass_security_challenge_using='sms')
 
 with smart_run(session):
     session.set_quota_supervisor(enabled=True, sleep_after=["likes", "comments_d", "follows", "unfollows", "server_calls_h"], sleepyhead=True, stochastic_flow=True, notify_me=True,
